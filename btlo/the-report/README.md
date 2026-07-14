@@ -2,6 +2,7 @@
 title: The Report
 platform: BTLO
 category: Security Operations
+Verify: https://blueteamlabs.online/achievement/share/challenge/166217/42
 difficulty: Easy
 skills: Threat intel analysis, report review
 ---
