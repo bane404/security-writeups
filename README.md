@@ -49,5 +49,4 @@ What this taught me, what I'd do differently.
 ```
 The front-matter block is what powers the auto-generated index table above — fill it in accurately and the table updates itself.
 About
-Part of my self-directed SOC analyst training, alongside a home lab running Wazuh and Suricata (soc-blue-team-lab).
-https://blueteamlabs.online/public/user/7a6d290e29071e3c9faea9
+Part of my self-directed SOC analyst training, alongside a home lab running Wazuh and Suricata ([soc-blue-team-lab](https://github.com/bane404/soc-blue-team-lab)) and ongoing certification prep. See my [BTLO profile](https://blueteamlabs.online/public/user/7a6d290e29071e3c9faea9) for full challenge history.
