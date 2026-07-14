@@ -3,7 +3,9 @@ Documented walkthroughs of blue team challenges I've completed — investigation
 Each write-up follows the same structure: scenario, objective, methodology, key findings, and lessons learned — not just the answer, but how I got there.
 Index
 <!-- INDEX_START -->
-_No write-ups yet — check back soon._
+| Challenge | Platform | Category | Difficulty | Key Skills |
+|---|---|---|---|---|
+| [The Report](./btlo/the-report/) | BTLO | Security Operations | Easy | Threat intel analysis, report review |
 <!-- INDEX_END -->
 (This table is auto-generated from each challenge's README — see `generate_readme.py`.)
 Structure
