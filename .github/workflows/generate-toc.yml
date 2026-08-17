@@ -1,0 +1,88 @@
+name: Auto-Update README TOC
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+      - '!README.md'
+      - '!.github/**'
+
+jobs:
+  update-toc:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Table of Contents
+        run: |
+          python3 - << 'EOF'
+          import os
+
+          # Platforms to track (case-insensitive folder lookup)
+          repo_root = "."
+          toc_lines = ["## Table of Contents\n"]
+
+          # Find all top-level directories excluding hidden ones like .github or .git
+          excluded_dirs = {'.git', '.github', '.vscode'}
+          folders = sorted([d for d in os.listdir(repo_root) if os.path.isdir(os.path.join(repo_root, d)) and d not in excluded_dirs])
+
+          for folder in folders:
+              folder_path = os.path.join(repo_root, folder)
+              md_files = sorted([f for f in os.listdir(folder_path) if f.endswith('.md')])
+              
+              if not md_files:
+                  continue
+
+              display_name = "Blue Team Labs Online (BTLO)" if folder.lower() == "btlo" else folder
+              toc_lines.append(f"### {display_name}")
+              toc_lines.append("| Challenge | Write-up |")
+              toc_lines.append("| :--- | :--- |")
+              
+              for file in md_files:
+                  challenge_title = os.path.splitext(file)[0].replace('-', ' ').replace('_', ' ').title()
+                  file_url = f"./{folder}/{file}"
+                  toc_lines.append(f"| {challenge_title} | [View Write-up]({file_url}) |")
+              
+              toc_lines.append("")
+
+          toc_str = "\n".join(toc_lines).strip()
+
+          with open("README.md", "r", encoding="utf-8") as f:
+              content = f.read()
+
+          start_marker = "<!-- TOC_START -->"
+          end_marker = "<!-- TOC_END -->"
+
+          if start_marker in content and end_marker in content:
+              before = content.split(start_marker)[0]
+              after = content.split(end_marker)[1]
+              new_content = f"{before}{start_marker}\n{toc_str}\n{end_marker}{after}"
+          else:
+              # If markers don't exist yet, insert above ## Write-up Format
+              if "## Write-up Format" in content:
+                  parts = content.split("## Write-up Format")
+                  new_content = f"{parts[0]}{start_marker}\n{toc_str}\n{end_marker}\n\n## Write-up Format{parts[1]}"
+              else:
+                  new_content = f"{content}\n\n{start_marker}\n{toc_str}\n{end_marker}\n"
+
+          with open("README.md", "w", encoding="utf-8") as f:
+              f.write(new_content)
+          EOF
+
+      - name: Commit and Push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: auto-update README table of contents [skip ci]"
+            git push
+          fi
