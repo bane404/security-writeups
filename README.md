@@ -10,14 +10,14 @@ Each write-up follows the same structure: scenario, objective, methodology, key 
 ### CyberDefenders
 | Challenge | Write-up |
 | :--- | :--- |
-| BlueSky Ransomware | [View Write-up](./CyberDefenders/BlueSky-Ransomware.md) |
-| OpenWire | [View Write-up](./CyberDefenders/OpenWire.md) |
+| Bluesky Ransomware | [View Write-up](./CyberDefenders/BlueSky-Ransomware.md) |
+| Openwire | [View Write-up](./CyberDefenders/OpenWire.md) |
 | Tomcat Takeover | [View Write-up](./CyberDefenders/tomcat-takeover.md) |
 
 ### Blue Team Labs Online (BTLO)
 | Challenge | Write-up |
 | :--- | :--- |
-| The Report | [View Write-up](./btlo/the-report.md) |
+| The Report | [View Write-up](./btlo/The-Report.md) |
 <!-- TOC_END -->
 
 ## Write-up Format
