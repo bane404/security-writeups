@@ -19,6 +19,7 @@ Each write-up follows the same structure: scenario, objective, methodology, key 
 ### Blue Team Labs Online (BTLO)
 | Challenge | Write-up |
 | :--- | :--- |
+| Log Analysis Sysmon | [View Write-up](./btlo/Log-Analysis-Sysmon.md) |
 | Network Analysis Web Shell | [View Write-up](./btlo/Network-Analysis-Web-Shell.md) |
 | Phishing Analysis 2 | [View Write-up](./btlo/Phishing-Analysis-2.md) |
 | Phishing Analysis | [View Write-up](./btlo/Phishing-Analysis.md) |
