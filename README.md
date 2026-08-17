@@ -12,6 +12,7 @@ Each write-up follows the same structure: scenario, objective, methodology, key 
 | :--- | :--- |
 | Bluesky Ransomware | [View Write-up](./CyberDefenders/BlueSky-Ransomware.md) |
 | Openwire | [View Write-up](./CyberDefenders/OpenWire.md) |
+| Packetmaze | [View Write-up](./CyberDefenders/PacketMaze.md) |
 | Tomcat Takeover | [View Write-up](./CyberDefenders/Tomcat-Takeover.md) |
 
 ### Blue Team Labs Online (BTLO)
