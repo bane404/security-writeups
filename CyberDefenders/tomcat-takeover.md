@@ -1,3 +1,10 @@
+| title | Tomcat Takeover |
+| :--- | :--- |
+| **platform** | CyberDefenders |
+| **category** | Network Forensics |
+| **difficulty** | Easy |
+| **skills** | Wireshark packet analysis, HTTP protocol analysis, directory enumeration, default credential exploitation, malicious WAR webshell analysis, reverse shell detection |
+
 # Tomcat Takeover — CyberDefenders
 
 ## Scenario
