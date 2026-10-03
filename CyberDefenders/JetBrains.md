@@ -1,4 +1,4 @@
-\---
+---
 
 title: JetBrains
 platform: CyberDefenders
