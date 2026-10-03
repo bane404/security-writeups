@@ -4,7 +4,7 @@ title: JetBrains
 platform: CyberDefenders
 category: Network Forensics
 difficulty: Easy
-skills: Wireshark packet analysis, HTTP stream analysis, CVE identification, malicious plugin analysis, MITRE ATT\&CK mapping
+skills: Wireshark packet analysis, HTTP stream analysis, CVE identification, malicious plugin analysis, MITRE ATT&CK mapping
 ---
 
 # JetBrains — CyberDefenders
@@ -23,7 +23,7 @@ Identify the attacker's IP address, the server version and CVE that was exploite
 Started with **Statistics → Conversations → IPv4** to see who talked to the server the most. Two external addresses looked almost identical by volume and duration (`156.197.187.149` and `23.158.56.196`), so packet counts alone could not decide it. Filtering on POST requests, which is where an attacker changes things instead of just browsing, showed the suspicious ones:
 
 ```
-http.request.method == "POST" \\\&\\\& ip.src == 23.158.56.196
+http.request.method == "POST" && ip.src == 23.158.56.196
 ```
 
 The POSTs from `23.158.56.196` went to REST API endpoints through an odd `/hax?jsp=...` path and to a plugin upload page, which is not normal user activity.
@@ -34,7 +34,7 @@ The server being attacked is `172.31.25.119`, listening on port `8111` (TeamCity
 Filtered for the server's responses to the attacker, followed an HTTP stream, and searched it for `version`:
 
 ```
-http.response \\\&\\\& ip.dst == 23.158.56.196
+http.response && ip.dst == 23.158.56.196
 ```
 
 The match that describes the server itself sits inside `ReactUI.extendServerInfo(...)`, where the application reports information about itself:
@@ -55,7 +55,7 @@ TeamCity `2023.11.3` is affected by two vulnerabilities disclosed together in Fe
 The traffic does. `CVE-2024-27198` abuses a request to a nonexistent page with a `jsp` parameter and `;.jsp` appended, which skips authentication:
 
 ```
-ip.src == 23.158.56.196 \\\&\\\& http.request.uri contains ";.jsp"
+ip.src == 23.158.56.196 && http.request.uri contains ";.jsp"
 ```
 
 Many requests had this pattern. The clearest example is TCP stream `365` (**Follow → HTTP Stream**), with no credentials in any of the requests:
@@ -66,7 +66,7 @@ POST /hax?jsp=/app/rest/users;.jsp
 POST /hax?jsp=/app/rest/users/id:2/tokens/mD5r0yemB0;.jsp
 ```
 
-The first request returned `200` with the server details, including the version. The second created a new user with the `SYSTEM\\\_ADMIN` role, and the server answered `200` and returned the new user (`id="2"`). The third requested an access token for that user. An unauthenticated client creating an administrator is the authentication bypass in action.
+The first request returned `200` with the server details, including the version. The second created a new user with the `SYSTEM_ADMIN` role, and the server answered `200` and returned the new user (`id="2"`). The third requested an access token for that user. An unauthenticated client creating an administrator is the authentication bypass in action.
 
 Answer: `CVE-2024-27198`
 
@@ -74,7 +74,7 @@ Answer: `CVE-2024-27198`
 The JSON body of the `POST /hax?jsp=/app/rest/users;.jsp` request shows the account the attacker created:
 
 ```json
-{"username": "c91oyemw", "password": "CL5vzdwLuK", "email": "c91oyemw@example.com", "roles": {"role": \\\[{"roleId": "SYSTEM\\\_ADMIN", "scope": "g"}]}}
+{"username": "c91oyemw", "password": "CL5vzdwLuK", "email": "c91oyemw@example.com", "roles": {"role": [{"roleId": "SYSTEM_ADMIN", "scope": "g"}]}}
 ```
 
 The server's `200` response echoed the new user back, so the account was created. Credentials: `c91oyemw` / `CL5vzdwLuK`.
@@ -83,7 +83,7 @@ The server's `200` response echoed the new user back, so the account was created
 Searched for the plugin name across the attacker's traffic to the server:
 
 ```
-ip.src == 23.158.56.196 \\\&\\\& ip.dst == 172.31.25.119 \\\&\\\& frame contains "NSt8bHTg"
+ip.src == 23.158.56.196 && ip.dst == 172.31.25.119 && frame contains "NSt8bHTg"
 ```
 
 Packet `24825` is a `POST /admin/pluginUpload.html` with content type `application/zip`, sent at `2024-06-30 08:03:06`. The uploaded file is `NSt8bHTg.zip`. The server's response was the plugins admin page showing "Uploaded plugin: NSt8bHTg" with an "Enable uploaded plugins" button. At this point the plugin is uploaded but not running yet, so the upload is not the execution.
@@ -111,7 +111,7 @@ The file the attacker tampered with is `Creds.txt`, the text file holding the ad
 |Server version|`2023.11.3 (build 147512)`|
 |Exploited CVE|`CVE-2024-27198`|
 |Auth bypass pattern|`/hax?jsp=/app/rest/...;.jsp`|
-|Attacker-created account|`c91oyemw` / `CL5vzdwLuK` (`SYSTEM\\\_ADMIN`)|
+|Attacker-created account|`c91oyemw` / `CL5vzdwLuK` (`SYSTEM_ADMIN`)|
 |Access token name|`mD5r0yemB0`|
 |Upload endpoint|`/admin/pluginUpload.html`|
 |Uploaded file|`NSt8bHTg.zip`|
@@ -121,7 +121,7 @@ The file the attacker tampered with is `Creds.txt`, the text file holding the ad
 |Tampered file|`Creds.txt`|
 |Attacker User-Agent|`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36`|
 
-## MITRE ATT\&CK
+## MITRE ATT&CK
 
 |Technique|ID|
 |-|-|
@@ -136,5 +136,5 @@ The file the attacker tampered with is `Creds.txt`, the text file holding the ad
 * When a search returns several matches for something like `version`, ask whose version it is. The server's own version, not a library's or a client's, is the one that matters.
 * Uploading a payload and running it are separate events with separate timestamps. The upload response showed the plugin waiting to be enabled, and the first request to the plugin's own JSP was the real execution.
 * Build filters from what the traffic shows, not from what I expect it to show.
-* Detection ideas from this chain: alert on `;.jsp` in request URIs, on any `POST /admin/pluginUpload.html`, on new users created with `SYSTEM\\\_ADMIN`, and on new directories under `/plugins/`. TeamCity should not be reachable from the internet, and `2023.11.4` or later closes this hole.
+* Detection ideas from this chain: alert on `;.jsp` in request URIs, on any `POST /admin/pluginUpload.html`, on new users created with `SYSTEM_ADMIN`, and on new directories under `/plugins/`. TeamCity should not be reachable from the internet, and `2023.11.4` or later closes this hole.
 
