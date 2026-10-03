@@ -11,6 +11,7 @@ Each write-up follows the same structure: scenario, objective, methodology, key 
 | Challenge | Write-up |
 | :--- | :--- |
 | Bluesky Ransomware | [View Write-up](./CyberDefenders/BlueSky-Ransomware.md) |
+| Jetbrains | [View Write-up](./CyberDefenders/JetBrains.md) |
 | Openwire | [View Write-up](./CyberDefenders/OpenWire.md) |
 | Packetmaze | [View Write-up](./CyberDefenders/PacketMaze.md) |
 | Retailbreach | [View Write-up](./CyberDefenders/RetailBreach.md) |
